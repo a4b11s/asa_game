@@ -12,22 +12,27 @@ export class GameMap {
     }
 
     public getMap(cellWidth: number): Buffer {
-        const canvasWidth =( (cellWidth+5)*this.grid[0].length) - 10
-        const canvasHeight =((cellWidth+5)*this.grid.length)-10
+        const gridPadding = cellWidth/15
+        const canvasWidth = ((cellWidth + gridPadding) * this.grid[0].length) - gridPadding
+        const canvasHeight = ((cellWidth + gridPadding) * this.grid.length) - gridPadding
 
         const canvas = createCanvas(canvasWidth, canvasHeight)
         const ctx = canvas.getContext('2d')
 
         ctx.fillStyle = 'white'
-        ctx.fillRect(0,0,canvas.width, canvas.height)
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-        this.grid.forEach((row, index)=>{
-            for (let i = 0; i < row.length;i++){
+        this.grid.forEach((row, index) => {
+            for (let i = 0; i < row.length; i++) {
+                const imgX = (cellWidth + gridPadding) * i
+                const imgY = (cellWidth + gridPadding) * index
+
                 const img = new Image()
-                img.onload = () => ctx.drawImage(img, (cellWidth+5)*i, (cellWidth+5)*index, cellWidth, cellWidth)
-                img.onerror = err => { throw err }
+                img.onload = () => ctx.drawImage(img, imgX, imgY, cellWidth, cellWidth)
+                img.onerror = err => {
+                    throw err
+                }
                 img.src = this.imgMap[row[i]]
-                console.log((cellWidth+5)*index )
             }
         })
 
